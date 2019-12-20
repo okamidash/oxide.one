@@ -1,6 +1,6 @@
 # Filesystem Layout
 
-For all machines, physical and virtual; storage specific directories are kept in the `/stg` directory. 
+For all machines, physical and virtual; storage specific directories are kept in the `/str` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
 
 The following directories are to be made when a system is provisioned.
 
@@ -16,7 +16,7 @@ Network based storage is kept under `/str/net`
 
 The pattern followed for network storage is as follows:
 
-/str/net/{type}/{host}/{volume}
+`/str/net/{type}/{host}/{volume}`
 
 Where `type` is the method of storage, abbrevieated to 3 letters. It is good practice to keep the first character unique, so that tab completion is easier.
 
@@ -48,7 +48,7 @@ Local storage is to be mounted and kept under `/str/loc`
 
 The pattern for local storage is as follows:
 
-`/str/loc/{type}/{volume}/path`
+`/str/loc/{type}/{volume}`
 
 Where `type` is the type of storage. The naming convention for the type of storage is as follows.
 
@@ -60,9 +60,33 @@ Where `type` is the type of storage. The naming convention for the type of stora
   
   This is to allow for clear identification of the type of storage, and it's relative speed. (it also looks cool)
 
-`volume` is the name of the volume. 
+`volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/str/loc/zfs/ember/glusterstore`
 
-The purpose of this naming scheme is to allow for easy identification and 
+
+
+**Root filesystem**
+
+Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
+
+This filesystem shall be labelled "EFI"
+
+
+
+The second filesystem shall be an EXT4 filesystem mounted at `/boot` not exceeding 10GB. This filesystem shall be named "BOOT"
+
+
+
+The third filesystem shall be an LVM based filesystem, taking up the rest of the device. This filesystem shall be named "ROOT"
+
+
+
+The LVM partition shall be allocated up to 50GB to the root filesystem, and the rest kept for alternate directories.
+
+
+
+
+
+
 
 
 
