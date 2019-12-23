@@ -4,7 +4,7 @@ Building infrastructure like an architect.
 
 ## About
 
-This repository is designed to document my infrastrucutre; along with standards around it.
+This repository is designed to document my infrastructure; along with standards around it.
 
 ## File Structure
 
@@ -15,7 +15,3 @@ phys - information about physical hosts
 net - network information
 
 virt - information about virtual machines
-
-
-
-
