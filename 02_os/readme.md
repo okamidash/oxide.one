@@ -34,9 +34,49 @@ Virtual hosts should have dnf-automatic configured to download and install immea
 
 `sudo systemctl enable dnf-automatic-install.timer && sudo systemctl start dnf-automatic-install.timer`
 
-### Users
+### Physical Hosts
 
-**okami**
+Physical hosts require a few more packages to be installed.
+
+**Virtualization**
+
+For hosts intended to be used as virtualization hosts, they must install the virtualization group. This can be done with:
+
+```shell
+dnf group install --with-optional virtualization
+```
+
+**Motd**
+
+For MOTD generation to work, the following packages need to be installed.
+
+- figlet
+
+- lolcat
+
+This can be done with:
+
+```shell
+dnf install -y lolcat figlet
+```
+
+**Cron**
+
+```shell
+dnf install -y cronie cronie-anacron
+```
+
+## **LDAP**
+
+For LDAP to work, please install the following packages.
+
+```shell
+dnf install -y freeipa-client autoconfig
+```
+
+## 02.03 - Users
+
+### okami
 
 okami is the default user setup for all systems. Every VM and Physical host should have this user existing by way of FreeIPA (LDAP).
 
@@ -48,7 +88,7 @@ They belong in the following groups (if they exist):
 
 - libvirt
 
-### Sudo
+### 02.04 - Sudo
 
 Users in the wheel group shall have passwordless sudo enabled. This can be achieved with the following line.
 
@@ -64,7 +104,7 @@ The following settings shall also be set in the sudoers file.
  Defaults env_keep += "XDG_SESSION_COOKIE"
 ```
 
-### SSH
+## 02.05 - SSH
 
 SSH is the primary method of accessing any system across the estate.
 
@@ -72,8 +112,34 @@ Password authentication is not allowed anywhere.
 
 `PasswordAuthentication no`
 
-### LDAP
+## 02.06 - LDAP
 
 LDAP Through FreeIPA is to be setup and configured for each client on the network. This is to allow for easy user management across systems. This is setup using the FreeIPA ansible roles; and the home dir shall be set on creation.
 
-MOTD
+### 02.07 - MOTD
+
+Physical hosts should have a MOTD setup using a script. Currently they should use the script provided by [this repo](https://github.com/okamidash/motdshell)
+
+For the script to run properly; place the script in `/usr/local/bin/dynmotd`
+
+Then append the following line onto /etc/profile:
+
+ `/usr/local/bin/dynmotd`
+
+### 02.08 - Cron
+
+Cron is used to handle backing up of virtual machines. 
+
+Enable and start Cron with 
+
+```shell
+systemctl enable --now crond.service
+```
+
+Then add the following line to `/etc/anacrontab`
+
+```shell
+@daily  25 backup-machines /usr/local/bin/backupscript.sh
+```
+
+Then grab the backupscript.sh file from [this repo](https://github.com/okamidash/motdshell) and place it in /usr/local/bin/

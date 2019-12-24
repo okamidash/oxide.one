@@ -2,11 +2,9 @@
 
 Section 3 covers the network layout.
 
-## 
-
 ## 03.01 - Networks
 
-There are 8 networks that exist within the oxide.one subsystem. 
+There are 9 networks that exist within the oxide.one subsystem. 
 
 They are outlined below.
 
@@ -57,6 +55,8 @@ The *wireguard* network is for physical and virtual machines that require intern
 ### Network | Management
 
 The *management* network is for physical machines that expose management interfaces such as IPMI, Routers or Switches. This network has access to all other networks.
+
+
 
 ## 03.02 - Network Tools
 
@@ -110,3 +110,28 @@ For this code to update successfully using the nsupdate key, FreeIPA needs to ha
 Additionally, login to the FreeIPA portal, and add the following lines into the 'BIND update policy' section of each DNS zone you want to allow DNS updates from.
 
 `grant "rndc-key" zonesub ANY;`
+
+
+
+## 03.03 - Network Setup
+
+Networks are managed across the oxide.one realm with Network Manager.
+
+The 'stack' shall behave as follows.
+
+physical interface -> vlan interface -> bridge interface.
+
+The physical interface should retain it's original name.
+
+The VLAN interface shall be named by the interfaces name, with '_{VLAN}'' appended to it.
+
+The Bridge interface shall be named after the network.
+
+Using Nmcli, you can create these interfaces using the following lines.
+
+```shell
+nmcli con add type bridge con-name zoned ifname zoned
+nmcli con add type vlan con-name vlan-zoned ifname vlan-zoned dev enp131s0 id 10 master zoned slave-type bridge
+```
+
+

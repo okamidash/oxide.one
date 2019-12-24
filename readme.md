@@ -15,5 +15,3 @@ This repository is designed to document my infrastructure; along with standards 
 [03 - Net](03_net/readme.md)
 
 [04 - VIrt](04_virt/readme.md)
-
-

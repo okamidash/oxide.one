@@ -1,4 +1,4 @@
-# Filesystem Layout
+# Section 1 | Filesystem Layout
 
 For all machines, physical and virtual; storage specific directories are kept in the `/str` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
 
@@ -8,7 +8,7 @@ The following directories are to be made when a system is provisioned.
 
 `/str/net`
 
-## Network Storage
+## 01.01 - Network Storage
 
 Network based storage is kept under `/str/net`
 
@@ -34,7 +34,7 @@ For local net storage; i.e a gluster volume mounted; use `local` as the host.
 
 Example:  `/str/net/gfs/local/vol1`
 
-## Local Storage
+## 01.02 - Local Storage
 
 Local storage is to be mounted and kept under `/str/loc` 
 
@@ -54,7 +54,7 @@ Where `type` is the type of storage. The naming convention for the type of stora
 
 `volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/str/loc/zfs/ember/glusterstore`
 
-## Root filesystem
+## 01.03 - Root filesystem
 
 Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
 
