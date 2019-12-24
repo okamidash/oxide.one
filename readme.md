@@ -2,28 +2,42 @@
 
 This document is meant to define some basic documentation about the oxide.one realm. It is not meant to be used as a guide, but you can feel free to if you so wish.
 
+**Todo**
+
+- [ ]  4 - Storage Setup
+
+- [ ]  5 - Software
+
+- [ ]  Hostname Choices
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+- [](#)
 - [Section 1 | Filesystem Layout](#section-1--filesystem-layout)
-  - [01.01 - Network Storage](#0101---network-storage)
-  - [01.02 - Local Storage](#0102---local-storage)
-  - [01.03 - Root filesystem](#0103---root-filesystem)
+  - [Network Storage](#network-storage)
+  - [Local Storage](#local-storage)
+  - [Root filesystem](#root-filesystem)
 - [Section 2 | OS Level Setup](#section-2--os-level-setup)
-  - [02.01 - Operating System](#0201---operating-system)
-  - [02.02 - Packages](#0202---packages)
-  - [**LDAP**](#ldap)
-  - [02.03 - Users](#0203---users)
-  - [02.05 - SSH](#0205---ssh)
-  - [02.06 - LDAP](#0206---ldap)
+  - [Operating System](#operating-system)
+  - [Packages](#packages)
+  - [Users](#users)
+  - [SSH](#ssh)
+  - [LDAP](#ldap)
 - [Section 3 | Networks](#section-3--networks)
-  - [03.01 - Networks](#0301---networks)
-  - [03.02 - Network Tools](#0302---network-tools)
-  - [03.03 - Network Setup](#0303---network-setup)
+  - [Networks](#networks)
+  - [Network Tools](#network-tools)
+  - [Network Setup](#network-setup)
 - [Section 4 | Virtualization](#section-4--virtualization)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# 
+
+---
+
+
 
 # Section 1 | Filesystem Layout
 
@@ -35,7 +49,7 @@ The following directories are to be made when a system is provisioned.
 
 `/str/net`
 
-## 01.01 - Network Storage
+## Network Storage
 
 Network based storage is kept under `/str/net`
 
@@ -61,7 +75,7 @@ For local net storage; i.e a gluster volume mounted; use `local` as the host.
 
 Example:  `/str/net/gfs/local/vol1`
 
-## 01.02 - Local Storage
+## Local Storage
 
 Local storage is to be mounted and kept under `/str/loc` 
 
@@ -81,7 +95,7 @@ Where `type` is the type of storage. The naming convention for the type of stora
 
 `volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/str/loc/zfs/ember/glusterstore`
 
-## 01.03 - Root filesystem
+## Root filesystem
 
 Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
 
@@ -93,11 +107,17 @@ The third filesystem shall be an LVM based filesystem, taking up the rest of the
 
 The LVM partition shall be allocated up to 50GB to the root filesystem, and the rest kept for alternate directories.
 
+
+
+---
+
+
+
 # Section 2 | OS Level Setup
 
 This section covers os level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
 
-## 02.01 - Operating System
+## Operating System
 
 The base operating system shall be based on Fedora 31 unless there is a specific reason not to. This is to make system management easier across the estate.
 
@@ -105,7 +125,7 @@ Physical hosts use Fedora server
 
 Virtual hosts use Fedora cloud images.
 
-## 02.02 - Packages
+## Packages
 
 ### DNF Automatic
 
@@ -161,7 +181,7 @@ dnf install -y lolcat figlet
 dnf install -y cronie cronie-anacron
 ```
 
-## **LDAP**
+**LDAP**
 
 For LDAP to work, please install the following packages.
 
@@ -169,7 +189,7 @@ For LDAP to work, please install the following packages.
 dnf install -y freeipa-client autoconfig
 ```
 
-## 02.03 - Users
+## Users
 
 ### okami
 
@@ -183,7 +203,7 @@ They belong in the following groups (if they exist):
 
 - libvirt
 
-### 02.04 - Sudo
+### Sudo
 
 Users in the wheel group shall have passwordless sudo enabled. This can be achieved with the following line.
 
@@ -199,7 +219,7 @@ The following settings shall also be set in the sudoers file.
  Defaults env_keep += "XDG_SESSION_COOKIE"
 ```
 
-## 02.05 - SSH
+## SSH
 
 SSH is the primary method of accessing any system across the estate.
 
@@ -207,11 +227,11 @@ Password authentication is not allowed anywhere.
 
 `PasswordAuthentication no`
 
-## 02.06 - LDAP
+## LDAP
 
 LDAP Through FreeIPA is to be setup and configured for each client on the network. This is to allow for easy user management across systems. This is setup using the FreeIPA ansible roles; and the home dir shall be set on creation.
 
-### 02.07 - MOTD
+### MOTD
 
 Physical hosts should have a MOTD setup using a script. Currently they should use the script provided by [this repo](https://github.com/okamidash/motdshell)
 
@@ -221,7 +241,7 @@ Then append the following line onto /etc/profile:
 
  `/usr/local/bin/dynmotd`
 
-### 02.08 - Cron
+### Cron
 
 Cron is used to handle backing up of virtual machines. 
 
@@ -239,11 +259,17 @@ Then add the following line to `/etc/anacrontab`
 
 Then grab the backupscript.sh file from [this repo](https://github.com/okamidash/motdshell) and place it in /usr/local/bin/
 
+
+
+---
+
+
+
 # Section 3 | Networks
 
 Section 3 covers the network layout.
 
-## 03.01 - Networks
+## Networks
 
 There are 9 networks that exist within the oxide.one subsystem. 
 
@@ -261,43 +287,45 @@ They are outlined below.
 | wireguard  | 10.0.8.0/24  | wg.oxide.one   | 8    | VPN Subnet       |
 | management | 10.0.10.0/24 | mgmt.oxide.one | 10   | Management       |
 
-### Network | Outer
+### Outer
 
 The *outer* network exists on the subnet 10.0.0.0/24 and on it contains the wider network. This is the subnet which all internet bound applications traverse through.
 
-### Network | Inner
+### Inner
 
 The *inner* network is the default network for machines that do not have a vlan configuration setup. This network is only used when provisioning physical hosts, as they often will not have a VLAN configured, and will need access to *a* network to configure them.
 
-### Network | Server
+### Server
 
 The *server* network is the network for physical hosts. All physical hosts are to have an assigned, static IP address. Any machines configured on this network should be reachable by their hostname + dns name. While DHCP does run on this network, it should not be relied upon.
 
-### Network | Virtual
+### Virtual
 
 The *virtual* network exists to serve nondescript virtual machines. Unless there is a specific reason not to; virtual machines should live on this subnet and have their IP provided by the DHCP server.
 
-### Network | Utility
+### Utility
 
 The *utility* network is for virtual machines that serve to provide utilities to other virtual machines. Virtual machines on this network should have a static IP. Some examples of Virtual Machines that would exist on this subnet are: FreeIPA (DNS), Mail Server, HaProxy.
 
-### Network | Zoned
+### Zoned
 
 The *zoned* network is for untrusted machines. These machines do not have any access to any other networks, only to the internet. This network is used for things like Metasploitable.
 
-### Network | Kube
+### Kube
 
 The *kube* network is for the virtual machines that underpin kubernetes clusters. They are kept outside the virtual machine network because each kubernetes cluster might also require load balancer IPs, and there might be IP address collisions if kept together.
 
-### Network | Wireguard
+### Wireguard
 
 The *wireguard* network is for physical and virtual machines that require internet access through a vpn. Any machine on this network will have internet access to other networks, but any internet bound activity will go through a wireguard tunnel to a VPN provider.
 
-### Network | Management
+### Management
 
 The *management* network is for physical machines that expose management interfaces such as IPMI, Routers or Switches. This network has access to all other networks.
 
-## 03.02 - Network Tools
+
+
+## Network Tools
 
 ### About
 
@@ -350,7 +378,7 @@ Additionally, login to the FreeIPA portal, and add the following lines into the 
 
 `grant "rndc-key" zonesub ANY;`
 
-## 03.03 - Network Setup
+## Network Setup
 
 Networks are managed across the oxide.one realm with Network Manager.
 
@@ -371,15 +399,15 @@ nmcli con add type bridge con-name zoned ifname zoned
 nmcli con add type vlan con-name vlan-zoned ifname vlan-zoned dev enp131s0 id 10 master zoned slave-type bridge
 ```
 
-Virtual Machines
 
-Network setup and names
 
-Storage Dir
+---
+
+
 
 # Section 4 | Virtualization
 
-### 04.01 - Networks
+### Virtual Networks
 
 Networks are handled differently in the oxide.one realm. Instead of using NAT for networking, bridging is preferred. This requires a bit of setup though.
 
@@ -416,3 +444,11 @@ Additionally, you will need to set the following sysctl value.
 ```
 net.ipv4.ip_forward = 1
 ```
+
+This can be set permanently with the following line:
+
+```shell
+echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ipforward.conf
+```
+
+
