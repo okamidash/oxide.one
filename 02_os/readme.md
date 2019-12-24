@@ -76,6 +76,4 @@ Password authentication is not allowed anywhere.
 
 LDAP Through FreeIPA is to be setup and configured for each client on the network. This is to allow for easy user management across systems. This is setup using the FreeIPA ansible roles; and the home dir shall be set on creation.
 
-
-
 MOTD

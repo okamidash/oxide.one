@@ -65,5 +65,3 @@ The second filesystem shall be an EXT4 filesystem mounted at `/boot` not exceedi
 The third filesystem shall be an LVM based filesystem, taking up the rest of the device. This filesystem shall be named "ROOT"
 
 The LVM partition shall be allocated up to 50GB to the root filesystem, and the rest kept for alternate directories.
-
-
