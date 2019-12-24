@@ -1,6 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Section 1 | Filesystem Layout](#section-1--filesystem-layout)
   - [Network Storage](#network-storage)
@@ -16,7 +16,7 @@
   - [Networks](#networks)
   - [Network Tools](#network-tools)
   - [Network Setup](#network-setup)
-- [Section 4 | Virtualization](#section-4--virtualization)
+- [Section 4 | Visualization](#section-4--virtualization)
   - [Virtual Networks](#virtual-networks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -29,7 +29,7 @@ This document is meant to define some basic documentation about the oxide.one re
 
 **Todo**
 
-- [ ] Virtualization - Storage Setup
+- [ ] Virtualisation - Storage Setup
 
 - [ ] Software
 
@@ -48,8 +48,6 @@ The following directories are to be made when a system is provisioned.
 `/str/loc`
 
 `/str/net`
-
-
 
 ## Network Storage
 
@@ -77,8 +75,6 @@ For local net storage; i.e a gluster volume mounted; use `local` as the host.
 
 Example:  `/str/net/gfs/local/vol1`
 
-
-
 ## Local Storage
 
 Local storage is to be mounted and kept under `/str/loc` 
@@ -99,8 +95,6 @@ Where `type` is the type of storage. The naming convention for the type of stora
 
 `volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/str/loc/zfs/ember/glusterstore`
 
-
-
 ## Root filesystem
 
 Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
@@ -117,7 +111,7 @@ The LVM partition shall be allocated up to 50GB to the root filesystem, and the 
 
 # Section 2 | OS Level Setup
 
-This section covers os level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
+This section covers OS level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
 
 ## Operating System
 
@@ -127,8 +121,6 @@ Physical hosts use Fedora server
 
 Virtual hosts use Fedora cloud images.
 
-
-
 ## Packages
 
 ### DNF Automatic
@@ -137,9 +129,9 @@ To make package management easier, all hosts shall have dnf automatic configured
 
 Physical hosts shall have dnf-automatic configured to download only. Installing the packages is left up to the operator to do; which is completed on a weekly basis. 
 
-This is done so that bringing down a physical host (and the vms that live on it) is planned, rather than sporadic.
+This is done so that bringing down a physical host (and the VMs that live on it) is planned, rather than sporadic.
 
-Virtual hosts should have dnf-automatic configured to download and install immeadietely. Tihs is done because bringing down a vm won't mean bringing down an entire stack (usually).
+Virtual hosts should have dnf-automatic configured to download and install immediately. This is done because bringing down a VM won't mean bringing down an entire stack (usually).
 
 **Setup**
 
@@ -153,13 +145,11 @@ Virtual hosts should have dnf-automatic configured to download and install immea
 
 `sudo systemctl enable dnf-automatic-install.timer && sudo systemctl start dnf-automatic-install.timer`
 
-
-
 ### Physical Hosts
 
 Physical hosts require a few more packages to be installed.
 
-**Virtualization**
+**Virtualisation**
 
 For hosts intended to be used as virtualization hosts, they must install the virtualization group. This can be done with:
 
@@ -195,8 +185,6 @@ For LDAP to work, please install the following packages.
 dnf install -y freeipa-client autoconfig
 ```
 
-
-
 ## Users
 
 ### okami
@@ -210,8 +198,6 @@ They belong in the following groups (if they exist):
 - wheel
 
 - libvirt
-
-
 
 ### Sudo
 
@@ -229,8 +215,6 @@ The following settings shall also be set in the sudoers file.
  Defaults env_keep += "XDG_SESSION_COOKIE"
 ```
 
-
-
 ## SSH
 
 SSH is the primary method of accessing any system across the estate.
@@ -239,13 +223,9 @@ Password authentication is not allowed anywhere.
 
 `PasswordAuthentication no`
 
-
-
 ## LDAP
 
 LDAP Through FreeIPA is to be setup and configured for each client on the network. This is to allow for easy user management across systems. This is setup using the FreeIPA ansible roles; and the home dir shall be set on creation.
-
-
 
 ### MOTD
 
@@ -256,8 +236,6 @@ For the script to run properly; place the script in `/usr/local/bin/dynmotd`
 Then append the following line onto /etc/profile:
 
  `/usr/local/bin/dynmotd`
-
-
 
 ### Cron
 
@@ -289,7 +267,7 @@ There are 9 networks that exist within the oxide.one subsystem.
 
 They are outlined below.
 
-| Name       | Subnet       | DNS            | Vlan | Purpose          |
+| Name       | Subnet       | DNS            | VLAN | Purpose          |
 | ---------- | ------------ | -------------- | ---- | ---------------- |
 | outer      | 10.0.0.0/24  | dhcp.oxide.one | 0    | Outer Network    |
 | inner      | 10.0.20.0/24 | N/A            | 0    | Inner network    |
@@ -305,63 +283,43 @@ They are outlined below.
 
 The *outer* network exists on the subnet 10.0.0.0/24 and on it contains the wider network. This is the subnet which all internet bound applications traverse through.
 
-
-
 ### Inner
 
-The *inner* network is the default network for machines that do not have a vlan configuration setup. This network is only used when provisioning physical hosts, as they often will not have a VLAN configured, and will need access to *a* network to configure them.
-
-
+The *inner* network is the default network for machines that do not have a VLAN configuration setup. This network is only used when provisioning physical hosts, as they often will not have a VLAN configured, and will need access to *a* network to configure them.
 
 ### Server
 
-The *server* network is the network for physical hosts. All physical hosts are to have an assigned, static IP address. Any machines configured on this network should be reachable by their hostname + dns name. While DHCP does run on this network, it should not be relied upon.
-
-
+The *server* network is the network for physical hosts. All physical hosts are to have an assigned, static IP address. Any machines configured on this network should be reachable by their hostname + DNS name. While DHCP does run on this network, it should not be relied upon.
 
 ### Virtual
 
 The *virtual* network exists to serve nondescript virtual machines. Unless there is a specific reason not to; virtual machines should live on this subnet and have their IP provided by the DHCP server.
 
-
-
 ### Utility
 
 The *utility* network is for virtual machines that serve to provide utilities to other virtual machines. Virtual machines on this network should have a static IP. Some examples of Virtual Machines that would exist on this subnet are: FreeIPA (DNS), Mail Server, HaProxy.
-
-
 
 ### Zoned
 
 The *zoned* network is for untrusted machines. These machines do not have any access to any other networks, only to the internet. This network is used for things like Metasploitable.
 
-
-
 ### Kube
 
 The *kube* network is for the virtual machines that underpin kubernetes clusters. They are kept outside the virtual machine network because each kubernetes cluster might also require load balancer IPs, and there might be IP address collisions if kept together.
 
-
-
 ### Wireguard
 
-The *wireguard* network is for physical and virtual machines that require internet access through a vpn. Any machine on this network will have internet access to other networks, but any internet bound activity will go through a wireguard tunnel to a VPN provider.
-
-
+The *wireguard* network is for physical and virtual machines that require internet access through a VPN. Any machine on this network will have internet access to other networks, but any internet bound activity will go through a wireguard tunnel to a VPN provider.
 
 ### Management
 
 The *management* network is for physical machines that expose management interfaces such as IPMI, Routers or Switches. This network has access to all other networks.
-
-
 
 ## Network Tools
 
 ### About
 
 The DNS servers for all networks should resolve to the central DNS server located on the *utility* network.  DNS Resolution is provided by a FreeIPA server, underpinned by BIND9. The DHCP server for each network should handle DNS updates to the central DNS server; so that remembering the IP address of each machine is redundant.
-
-
 
 ### DHCP
 
@@ -372,8 +330,6 @@ For the *inner* network, DHCP is provided by [RouterOS](https://mikrotik.com/sof
 For *all other* networks, DHCP is handled by the [ISC DHCP](https://www.isc.org/dhcp/) daemon (DHCPD). 
 
 For networks handled by DHCPD, the DHCP start range will be .50-.240 to allow for flexibility for static IP addresses to be set in edge cases.
-
-
 
 ### Nsupdate
 
@@ -412,15 +368,13 @@ Additionally, login to the FreeIPA portal, and add the following lines into the 
 
 `grant "rndc-key" zonesub ANY;`
 
-
-
 ## Network Setup
 
 Networks are managed across the oxide.one realm with Network Manager.
 
 The 'stack' shall behave as follows.
 
-physical interface -> vlan interface -> bridge interface.
+physical interface -> VLAN interface -> bridge interface.
 
 The physical interface should retain it's original name.
 
@@ -443,7 +397,7 @@ nmcli con add type vlan con-name vlan-zoned ifname vlan-zoned dev enp131s0 id 10
 
 Networks are handled differently in the oxide.one realm. Instead of using NAT for networking, bridging is preferred. This requires a bit of setup though.
 
-For each Network (out of the 9); there needs to have a bridge interface existing on the host machine assigned to the vlan interface.
+For each Network (out of the 9); there needs to have a bridge interface existing on the host machine assigned to the VLAN interface.
 
 Then, you will need to define the networks in libvirt. 
 
