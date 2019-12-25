@@ -39,6 +39,17 @@ This document is meant to define some basic documentation about the oxide.one re
 
 ---
 
+# Section 1 | Architecture
+
+This section will cover the overall design, as well as describe the physical hosts and their attributes.
+
+<div>
+<div class="mxgraph" style="max-width:100%;border:1px solid transparent;" data-mxgraph="{"highlight":"#0000ff","nav":true,"resize":true,"toolbar":"zoom layers lightbox","edit":"_blank","xml":"<mxfile host=\"www.draw.io\" modified=\"2019-12-25T00:24:22.282Z\" agent=\"Mozilla/5.0 (X11; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0\" etag=\"lqeWqP8F6-rLJABrTXA4\" version=\"12.4.3\" type=\"device\" pages=\"1\"><diagram id=\"tqly1Oa0MfOaVjEMcyuA\" name=\"Page-1\">7Vttk5s2EP41nmk/nAck3vzRsZ2m7TVzc9c0Tb/JRgfqAfLI8lt+fSSQMVg+GztwmEzmPhxaSRitnt1ndxE9OIo3vzE0D/+iPo56wPA3PTjuAWCa9kD8k5JtJnEsJxMEjPhq0F7wRL5iJTSUdEl8vCgN5JRGnMzLwhlNEjzjJRlijK7Lw55pVP7VOQqwJniaoUiXfiY+DzOpB9y9/AMmQbj7ZdNRC47RbrBaySJEPl0XRHDSgyNGKc+u4s0IR1J5O71k896/0ps/GMMJrzLB/zhAfz4DJ/7jHj19IuQ/f07uoKcejm93K8a+UIBqUsZDGtAERZO99B2jy8TH8raGaO3H3FM6F0JTCP/HnG/VbqIlp0IU8jhSvXhD+L9qurz+Iq/7tmqNN4Wu8XbXSDjbppP6wN61vxQ79/PS1n6iP5RAEM2EJjiTvCdRpPoXnNEXPKIRZakC4MQYW54lejLVSH28qnIlWtAlm+FTelYg4IgFmJ8YaOfIECaFaYzFUsQ8hiPEyar8IEhhO8jHqalivWhbGDCnJOGLwp0fpEAMUGYKXfV4ykgt0y5D6cx40zNOjzfBqfHiInviXauw9L0ohfMF0LaMn9B+E2ibnYL24AeAtiKfFYqWOV320z9xO2CJrl/okmP2q2YBe3xLsK5DwvHTHKX7uxYEXsbys0BSATzuZOhMUrMQMwiXC4ayucKME8GYw4gEiRByaSoKYbIPb05jTIeEmgCMg71TzfWeiOGOXcMiCe+Ex1BU2JkrfEqrLqVv2yWvMjjjVkTjATMilo6Z7mpKnsas29MM3LHhuvV6GlDR0cA2HI1XxqrrNe8GgOYGPg8/6giNIhEsyy0TEehcCmcRXfoXm79vY8+3ju21B6bQceqxeeusyXtHLN5qyuA7GB6XAoi9lddl2DkL1BlCVDRs9zsN+7ugADVre0xJVrLt4993w5HjfTpFuMZ5i/MJEzksoZJF13jB6zEp+yCigbpNmeYRo4JNGZXptkujbolGq4bmzUbmniFic1ivWdkVzco0juOnWcIEtndRpG2qpPRNI237hNGPHp/uIHBu0uZz490pC7Ru9Iamyh5wIp6qYCUuA3mZ5jGgkMcsMFuliUw2VMgLo4/c4J97GQIZ8pd67kjuC1v16Yb4uC/tUE2YssNbnL1x9ak1ply5V3irlOsg/MozsCJs7GOwaSzlMk0NN+8iNHuZEuZLgPQNq34LREqvLFthHZp1DjQ7aN0g9fThw9ZnNMBJplfQSb3aretVDxR/T54xS2im1gYIo3m1wvaDRktT60NIcUI2mVq9TqrVbV2teoQzolOGUqWaRheVapmtK9XRXSuOFFLNTvpVq3W/CqGmtrctvl6TNLoNZ41gYgxrfp9jqrTsNt/nAO9kFnhpltlM1rhTYYVcxyrkOivC+BJFFyc7Vp7srOIO5zo7LL/Z6yXzymTHNBojjoEGnDmjXLj6DjDGYc2h/VAc2q1SRu+a8n3TlDHwJoYH6qWM/GTWbVLG4WvkM6dbDsffJMUAvSzyGsXYBYpZchIJ33oxxdg5xYiEq7sck4O/LY6Bx3KTYxyTT6zdKQK97jOjUxTxLlV9Drmm/UQa6GWfhPBCOa0bZcpDxbafTAO98DNFySLEuNehepqm1/aDI6fV4Oi6fLrh85Ejq4HgqOpr2FaCI8u+LJ9u5bwj0IuUrwU7TiHY+Sr23L841HHyUEfO726sk2P5rWId6N1cPg30QiyZYYbRLOwCaVjGzWXU7R7duS6jbpg0xsMGSOOmi7CHh+Qh/AEO1YPqRVu3QDIvyym+mGPcnGPk9O5yTA79tjimcj5tN+YRq59r8gqwWQsCCZaIXR6feDl21kF3kZN/idQaco5VDI4hZ9AYcqqX8Mzipz0xSgIci2VfDB1pLAo7cRDzn+i5Gj1WVfQ053f0Ml5EeEiWcRcj2ybLTKK5/8o6ixb236rDyTc=</diagram></mxfile>"}"></div>
+<script type="text/javascript" src="https://www.draw.io/js/viewer.min.js"></script>
+</div>
+
+
+
 # Section 1 | Filesystem Layout
 
 For all machines, physical and virtual; storage specific directories are kept in the `/str` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
