@@ -2,21 +2,24 @@
 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Section 1 | Filesystem Layout](#section-1--filesystem-layout)
+- [Section 1 | Architecture](#section-1--architecture)
+  - [Diagram](#diagram)
+  - [Physical hosts](#physical-hosts)
+- [Section 2 | Filesystem Layout](#section-2--filesystem-layout)
   - [Network Storage](#network-storage)
   - [Local Storage](#local-storage)
   - [Root filesystem](#root-filesystem)
-- [Section 2 | OS Level Setup](#section-2--os-level-setup)
+- [Section 3 | OS Level Setup](#section-3--os-level-setup)
   - [Operating System](#operating-system)
   - [Packages](#packages)
   - [Users](#users)
   - [SSH](#ssh)
   - [LDAP](#ldap)
-- [Section 3 | Networks](#section-3--networks)
+- [Section 4 | Networks](#section-4--networks)
   - [Networks](#networks)
   - [Network Tools](#network-tools)
   - [Network Setup](#network-setup)
-- [Section 4 | Visualization](#section-4--virtualization)
+- [Section 5 | Virtualization](#section-5--virtualization)
   - [Virtual Networks](#virtual-networks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -41,11 +44,17 @@ This document is meant to define some basic documentation about the oxide.one re
 
 # Section 1 | Architecture
 
-This section will cover the overall design, as well as describe the physical hosts and their attributes.
+This section will cover the overall design, as well as describe the physical hosts and their attributes. The following image gives a rundown of the hosts I will be referencing in this section.
 
-![host_diagram][files/host_architecture.png]
+## Diagram
 
-# Section 1 | Filesystem Layout
+![host_diagram](files/host_architecture.png)
+
+## Physical hosts
+
+I have a collection of physical hosts in the oxide.one estate. I will discuss their physcial attributes now.
+
+# Section 2 | Filesystem Layout
 
 For all machines, physical and virtual; storage specific directories are kept in the `/str` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
 
@@ -115,7 +124,7 @@ The LVM partition shall be allocated up to 50GB to the root filesystem, and the 
 
 ---
 
-# Section 2 | OS Level Setup
+# Section 3 | OS Level Setup
 
 This section covers OS level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
 
@@ -263,7 +272,7 @@ Then grab the backupscript.sh file from [this repo](https://github.com/okamidash
 
 ---
 
-# Section 3 | Networks
+# Section 4 | Networks
 
 Section 3 covers the network layout.
 
@@ -397,7 +406,7 @@ nmcli con add type vlan con-name vlan-zoned ifname vlan-zoned dev enp131s0 id 10
 
 ---
 
-# Section 4 | Virtualization
+# Section 5 | Virtualization
 
 ## Virtual Networks
 
