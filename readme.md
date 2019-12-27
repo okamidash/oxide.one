@@ -1,6 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Section 1 | Architecture](#section-1--architecture)
   - [Diagram](#diagram)
@@ -168,8 +168,6 @@ Lithium is my Torrenting server. I use it to power requests.doubledash.org; as w
 
 ---
 
-
-
 # Section 2 | OS Level Setup
 
 This section covers OS level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
@@ -334,8 +332,6 @@ Then grab the backupscript.sh file from [this repo](https://github.com/okamidash
 
 ---
 
-
-
 # Section 3 | Filesystem Layout
 
 For all machines, physical and virtual; storage specific directories are kept in the `/storage` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
@@ -392,8 +388,6 @@ Where `type` is the type of storage. The naming convention for the type of stora
 
 `volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/storage/loc/zfs/ember/glusterstore`
 
-
-
 ## Root filesystem
 
 Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
@@ -408,8 +402,6 @@ The LVM partition shall be allocated up to 50GB to the root filesystem, and the 
 
 The Root filesystem should be formatted as an EXT4 Partition.
 
-
-
 ## NVME Storage
 
 For virtualization hosts; NVME Storage is available on the local system. 
@@ -422,11 +414,7 @@ Inside the filesystem, there shall be a directory called `images`.
 
 Where NVME storage does not currently exist, there shall be SSD based storage ; with the same rules as above (except mounted at `/storage/loc/flame/virt`)
 
-
-
 ---
-
-
 
 # Section 4 | Networks
 
@@ -621,7 +609,3 @@ or
 ```
 /storage/loc/inferno/virt/images
 ```
-
-
-
-
