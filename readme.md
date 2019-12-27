@@ -13,6 +13,8 @@
   - [Root filesystem](#root-filesystem)
 - [Section 3 | OS Level Setup](#section-3--os-level-setup)
   - [Operating System](#operating-system)
+  - [SELINUX](#selinux)
+  - [Firewall](#firewall)
   - [Packages](#packages)
   - [Users](#users)
   - [SSH](#ssh)
@@ -102,8 +104,6 @@ Plex also runs on Cobra in a docker container, which is often it's main resource
 ### Helix
 
 Helix is the dedicated 'docker box'. It provides several key docker containers, like my blog and jenkins build server.
-
-
 
 ## Virtual Hosts
 
@@ -246,6 +246,22 @@ Physical hosts use Fedora server
 
 Virtual hosts use Fedora cloud images.
 
+## SELINUX
+
+Selinux is disabled on physical hosts and virtual hosts.
+
+This can be done  by editing the file `/etc/selinux/config` and ensuring the line `SELINUX=` is `SELINUX=disabled`
+
+## Firewall
+
+The firewall on physical hosts is disabled. This can be done with 
+
+```shell
+systemctl stop firewalld && systemctl stop firewalld
+```
+
+
+
 ## Packages
 
 ### DNF Automatic
@@ -273,6 +289,8 @@ Virtual hosts should have dnf-automatic configured to download and install immed
 ### Physical Hosts
 
 Physical hosts require a few more packages to be installed.
+
+When installing the system, make sure to follow the spec for system storage.
 
 **Virtualisation**
 
@@ -311,6 +329,10 @@ dnf install -y freeipa-client autoconfig
 ```
 
 ## Users
+
+### Root Account
+
+The root account is disabled.
 
 ### okami
 
