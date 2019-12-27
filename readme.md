@@ -7,11 +7,7 @@
   - [Physical hosts](#physical-hosts)
   - [Virtual Hosts](#virtual-hosts)
   - [Docker Containers](#docker-containers)
-- [Section 2 | Filesystem Layout](#section-2--filesystem-layout)
-  - [Network Storage](#network-storage)
-  - [Local Storage](#local-storage)
-  - [Root filesystem](#root-filesystem)
-- [Section 3 | OS Level Setup](#section-3--os-level-setup)
+- [Section 2 | OS Level Setup](#section-2--os-level-setup)
   - [Operating System](#operating-system)
   - [SELINUX](#selinux)
   - [Firewall](#firewall)
@@ -19,12 +15,18 @@
   - [Users](#users)
   - [SSH](#ssh)
   - [LDAP](#ldap)
+- [Section 3 | Filesystem Layout](#section-3--filesystem-layout)
+  - [Network Storage](#network-storage)
+  - [Local Storage](#local-storage)
+  - [Root filesystem](#root-filesystem)
+  - [NVME Storage](#nvme-storage)
 - [Section 4 | Networks](#section-4--networks)
   - [Networks](#networks)
   - [Network Tools](#network-tools)
   - [Network Setup](#network-setup)
 - [Section 5 | Virtualization](#section-5--virtualization)
   - [Virtual Networks](#virtual-networks)
+  - [Storage](#storage)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -164,77 +166,11 @@ Lithium is my Torrenting server. I use it to power requests.doubledash.org; as w
 | Nginx-pxy | custom     | Inferno   | 443      | Load Balancer        |
 | Plex      | pms-docker | Cobra     | Host     | Plex Media           |
 
-# Section 2 | Filesystem Layout
-
-For all machines, physical and virtual; storage specific directories are kept in the `/str` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
-
-The following directories are to be made when a system is provisioned.
-
-`/str/loc`
-
-`/str/net`
-
-## Network Storage
-
-Network based storage is kept under `/str/net`
-
-The pattern followed for network storage is as follows:
-
-`/str/net/{type}/{host}/{volume}`
-
-Where `type` is the method of storage, abbreviated to 3 letters. It is good practice to keep the first character unique, so that tab completion is easier.
-
-- Network FIle System (NFS): `/str/net/nfs`
-
-- Gluster FS: `/str/net/gfs`
-
-- Ceph Storage: `/str/net/cep`
-
-`host` relates to where the storage is kept. For a NFS based storage exported on the host 'blackbird' the directory would be `/str/net/nfs/blackbird/`
-
-`volume` relates to the name of the share/volume exported.  Continuing the previous example, for a share called `cloudinit` the full storage path is `/str/net/nfs/blackbird/cloudinit`
-
-*Special case*
-
-For local net storage; i.e a gluster volume mounted; use `local` as the host.
-
-Example:  `/str/net/gfs/local/vol1`
-
-## Local Storage
-
-Local storage is to be mounted and kept under `/str/loc` 
-
-The pattern for local storage is as follows:
-
-`/str/loc/{type}/{volume}`
-
-Where `type` is the type of storage. The naming convention for the type of storage is as follows.
-
-- ZFS based Raid array: `ember`
-
-- SSD based Storage: `flame`
-
-- NVME based Storage: `blaze`
-  
-  This is to allow for clear identification of the type of storage, and it's relative speed. (it also looks cool)
-
-`volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/str/loc/zfs/ember/glusterstore`
-
-## Root filesystem
-
-Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
-
-This filesystem shall be labelled "EFI"
-
-The second filesystem shall be an EXT4 filesystem mounted at `/boot` not exceeding 10GB. This filesystem shall be named "BOOT"
-
-The third filesystem shall be an LVM based filesystem, taking up the rest of the device. This filesystem shall be named "ROOT"
-
-The LVM partition shall be allocated up to 50GB to the root filesystem, and the rest kept for alternate directories.
-
 ---
 
-# Section 3 | OS Level Setup
+
+
+# Section 2 | OS Level Setup
 
 This section covers OS level setup for both virtual machines and physical machines. Generally I keep stuff at the OS defaults, with the following changes made.
 
@@ -242,7 +178,7 @@ This section covers OS level setup for both virtual machines and physical machin
 
 The base operating system shall be based on Fedora 31 unless there is a specific reason not to. This is to make system management easier across the estate.
 
-Physical hosts use Fedora server
+Physical hosts use Fedora server.
 
 Virtual hosts use Fedora cloud images.
 
@@ -250,25 +186,23 @@ Virtual hosts use Fedora cloud images.
 
 Selinux is disabled on physical hosts and virtual hosts.
 
-This can be done  by editing the file `/etc/selinux/config` and ensuring the line `SELINUX=` is `SELINUX=disabled`
+This can be done by editing the file `/etc/selinux/config` and ensuring the line `SELINUX=` is `SELINUX=disabled`
 
 ## Firewall
 
-The firewall on physical hosts is disabled. This can be done with 
+The firewall on physical hosts is disabled. This can be done with
 
 ```shell
 systemctl stop firewalld && systemctl stop firewalld
 ```
 
-
-
 ## Packages
 
 ### DNF Automatic
 
-To make package management easier, all hosts shall have dnf automatic configured and installed. 
+To make package management easier, all hosts shall have dnf automatic configured and installed.
 
-Physical hosts shall have dnf-automatic configured to download only. Installing the packages is left up to the operator to do; which is completed on a weekly basis. 
+Physical hosts shall have dnf-automatic configured to download only. Installing the packages is left up to the operator to do; which is completed on a weekly basis.
 
 This is done so that bringing down a physical host (and the VMs that live on it) is planned, rather than sporadic.
 
@@ -350,16 +284,12 @@ They belong in the following groups (if they exist):
 
 Users in the wheel group shall have passwordless sudo enabled. This can be achieved with the following line.
 
-` %wheel ALL=(ALL) NOPASSWD: ALL`
+`%wheel ALL=(ALL) NOPASSWD: ALL`
 
 The following settings shall also be set in the sudoers file.
 
 ```
- Defaults env_keep += "LANG LANGUAGE LINGUAS LC_* _XKB_CHARSET"
- Defaults env_keep += "HOME"
- Defaults env_keep += "XAPPLRESDIR XFILESEARCHPATH XUSERFILESEARCHPATH"
- Defaults env_keep += "QTDIR KDEDIR"
- Defaults env_keep += "XDG_SESSION_COOKIE"
+ Defaults env_keep += "LANG LANGUAGE LINGUAS LC_* _XKB_CHARSET" Defaults env_keep += "HOME" Defaults env_keep += "XAPPLRESDIR XFILESEARCHPATH XUSERFILESEARCHPATH" Defaults env_keep += "QTDIR KDEDIR" Defaults env_keep += "XDG_SESSION_COOKIE"
 ```
 
 ## SSH
@@ -382,13 +312,13 @@ For the script to run properly; place the script in `/usr/local/bin/dynmotd`
 
 Then append the following line onto /etc/profile:
 
- `/usr/local/bin/dynmotd`
+`/usr/local/bin/dynmotd`
 
 ### Cron
 
-Cron is used to handle backing up of virtual machines. 
+Cron is used to handle backing up of virtual machines.
 
-Enable and start Cron with 
+Enable and start Cron with
 
 ```shell
 systemctl enable --now crond.service
@@ -403,6 +333,100 @@ Then add the following line to `/etc/anacrontab`
 Then grab the backupscript.sh file from [this repo](https://github.com/okamidash/motdshell) and place it in /usr/local/bin/
 
 ---
+
+
+
+# Section 3 | Filesystem Layout
+
+For all machines, physical and virtual; storage specific directories are kept in the `/storage` directory. The purpose of this is to make it clear the type of storage, where it is and to root FS uncluttered.
+
+The following directories are to be made when a system is provisioned.
+
+`/storage/loc`
+
+`/storage/net`
+
+## Network Storage
+
+Network based storage is kept under `/storage/net`
+
+The pattern followed for network storage is as follows:
+
+`/storage/net/{type}/{host}/{volume}`
+
+Where `type` is the method of storage, abbreviated to 3 letters. It is good practice to keep the first character unique, so that tab completion is easier.
+
+- Network FIle System (NFS): `/storage/net/nfs`
+
+- Gluster FS: `/storage/net/gfs`
+
+- Ceph Storage: `/storage/net/cep`
+
+`host` relates to where the storage is kept. For a NFS based storage exported on the host 'blackbird' the directory would be `/storage/net/nfs/blackbird/`
+
+`volume` relates to the name of the share/volume exported.  Continuing the previous example, for a share called `cloudinit` the full storage path is `/storage/net/nfs/blackbird/cloudinit`
+
+*Special case*
+
+For local net storage; i.e a gluster volume mounted; use `local` as the host.
+
+Example:  `/storage/net/gfs/local/vol1`
+
+## Local Storage
+
+Local storage is to be mounted and kept under `/storage/loc` 
+
+The pattern for local storage is as follows:
+
+`/storage/loc/{type}/{volume}`
+
+Where `type` is the type of storage. The naming convention for the type of storage is as follows.
+
+- ZFS based Raid array: `ember`
+
+- SSD based Storage: `flame`
+
+- NVME based Storage: `blaze`
+  
+  This is to allow for clear identification of the type of storage, and it's relative speed. (it also looks cool)
+
+`volume` relates to the name of the volume. For a ZFS filesystem with a volume exported as `glusterstore` the path would be as follows: `/storage/loc/zfs/ember/glusterstore`
+
+
+
+## Root filesystem
+
+Where possible, the root filesystem externally shall be only 3 partitions. The first being a FAT32 EFI boot partition, mounted at `/boot/efi`. The size shall not exceed 500MB.
+
+This filesystem shall be labelled "EFI"
+
+The second filesystem shall be an EXT4 filesystem mounted at `/boot` not exceeding 10GB. This filesystem shall be named "BOOT"
+
+The third filesystem shall be an LVM based filesystem, taking up the rest of the device. This filesystem shall be named "ROOT"
+
+The LVM partition shall be allocated up to 50GB to the root filesystem, and the rest kept for alternate directories.
+
+The Root filesystem should be formatted as an EXT4 Partition.
+
+
+
+## NVME Storage
+
+For virtualization hosts; NVME Storage is available on the local system. 
+
+The NVME storage filesystem should exist on a Logical Volume called 'virt'; formatted as XFS.
+
+The mount point for this filesystem is `/storage/loc/blaze/virt`
+
+Inside the filesystem, there shall be a directory called `images`.
+
+Where NVME storage does not currently exist, there shall be SSD based storage ; with the same rules as above (except mounted at `/storage/loc/flame/virt`)
+
+
+
+---
+
+
 
 # Section 4 | Networks
 
@@ -583,3 +607,21 @@ This can be set permanently with the following line:
 ```shell
 echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/99-ipforward.conf
 ```
+
+## Storage
+
+The 'default' storage for libvirt shall point to the 'virt' lvm partition. This is either
+
+```
+/storage/loc/blaze/virt/images
+```
+
+or
+
+```
+/storage/loc/inferno/virt/images
+```
+
+
+
+
